@@ -12,7 +12,7 @@ Posso visualizar as notas das avaliações como aluno e adiconar/modificar como 
 
 Posso ver minhas materias vigentes e seus respectivos horarios; (Wallace)
 
-Posso fazer requerimentos de ocorrencias (trancamento parcial/total, regime especial, outros) do meu curso; (Leonardo)
+Posso fazer requerimentos de ocorrencias (trancamento parcial/total, regime especial) do meu curso; (Leonardo)
 
 **Cartão CRC:**
 | Classe | Responsabilidade | Colaborador |
