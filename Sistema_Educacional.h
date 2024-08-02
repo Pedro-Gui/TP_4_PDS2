@@ -1,99 +1,192 @@
 #ifndef _SISTEMA_EDUCACIONAL_H
 #define _SISTEMA_EDUCACIONAL_H
 
+//Bibliotecas
 #include <map>
 #include <string>
-#include <iostream>
 #include <vector>
-
-using namespace std;
-
-class User : public Banco_de_dados, public Materia{
-   private:
+#include <memory>
    
-      string Nome;              // String de nome completo no max 100 
-      unsigned int matricula;   // 2023076559 -> 2023 ano de ingresso / 07 numero do curso / 6559 identificador de aluno // 0000000000 -> Admin
-      string senha;             // Sem sequencia, menor que 50 caracteres, maior que 6 caracteres, sem espaco em branco  // Admin0 -> Senha Admin
-      string data_Nasc;          //Data  nascimento dd/mm/aa
-      string curso;
-      int telefone;
-      string nacionalidade;
-      string email;
-      int CPF;
-      string sexo;              //Masc ou Fem
-      int NSG; //Nota Semestral Global --> média ponderada , peso baseado na carga horária semanal da matéria
-      bool Reg_Especial; //Se o usuário está em Regime Especial
-   
-   struct informacoes{
-      map<string, vector<int>> horario; /* dia e horario da materia, "Sexta" -> vector[0] horario de inicio da aula
-                                                                                vector[1] horario de fim da aula */      
-      map<string, vector<int>> notas; /*map de provas e suas notas, "P1" -> vector[0] nota tirada
-                                                                            vector[1] nota maxima*/
-      bool CondTrancado;
-      int CargaHoraria; /* Carga horária semanal da matéria */
-   };
-      
-   map<string, informacoes> Materias;
-   //map<string, informacoes> passwords_;
+    struct Informacoes
+    {
+        std::vector<std::string> dia;
+        std::string horario;
+        std::vector<float> notas;   
+        bool condTrancado;
+        int cargaHoraria;
+        int NumeroAvaliacoes;
+        std::string Professor;
+    };
 
-   public:
-      void cadastro(string nome,
-                     unsigned int matricula,
-                     int funcaoID,
-                     string datanasc,
-                     string curso,
-                     int telefone,
-                     string Nacionalidade,
-                     string email,
-                     int CPF,
-                     string sexo);
+class User {
+protected:
+    std::string nome;      
+    unsigned int matricula; // 2023 ano 95 curso 1627 
+    std::string senha;      
+    std::string dataNasc;
+    std::string curso;
+    std::string telefone;
+    std::string nacionalidade;
+    std::string email;
+    std::string CPF;
+    std::string sexo;
+    int NSG;
+    bool regEspecial;
 
-      bool validPassword(const string& password) const;
+public:
+    virtual ~User() = default;
 
-      bool login(string matricula, string Senha);
-
-       
+    /// @brief Imprime todos os dados de matricula sequencialmente;
+    /// nome: nome \n matricula: matricula \n ... 
+    virtual void visuDadosMatricula() const = 0;
 };
 
 class Banco_de_dados {
-   public:
-   Aluno get_aluno(unsigned int matricula);
-   Professor get_professor(unsigned int matricula);
-   Admin get_admin(unsigned int matricula);
-
-};
-
-class Materia : public Banco_de_dados{
-      public:
-      User get_user(unsigned int matricula);
-      void condicao(bool CondTrancado);                                   /* Professor deleta avaliacao ja existente */
-};
-
- 
-class Aluno : public User{
-    void visu_avaliacoes(Materia param);                      // Aluno pode visualizar quais as avaliacoes da materia
-    void visu_notas(Materia param); // Aluno pode visualizar as notas da materia
-    void visu_dados_matricula();    
-    void visu_materias(Materia param);
-    void visu_horarios(Materia param);
-};
-
-class Professor : public User{
-   public:
-      void add_avaliacoes(const string &avaliacao);  //Professor pode adicionar avaliacoes e modifica-las 
-      void add_notas(const string &avaliacao, const vector<int> &notas); //Professor pode adicionar notas e modifica-las
-      void visu_notas_todos();
-      void apagar(const string &avaliacao);
-};
-
-class Admin : public User{
 public:
-   bool insert_aluno(Aluno param);
-   bool insert_professor(Professor param);
-   void insert_materia(Materia param);
-   void trancar_materia(Materia param);
-   void Ativar_Reg_Esp(Aluno param);
-   void visu_dados_matricula_todos();
+    /// @brief identifica se é aluno, professor ou admin e acessa seu respectivo *.txt, apos isso cria uma classe aluno/professor/admin e usa seu construtor para inicializar a classe -
+    /// @param matricula 
+    /// @return aluno, admin ou professor
+    std::shared_ptr<User> getUser(unsigned int matricula);
+
+    /// @brief verificar se a senha segue os seguintes requisitos:
+    /* 
+   * Condicao 1: A senha nao pode ter a seguencia '123456'.
+   * Condicao 2: A senha nao pode ter mais do que 50 caracteres (no maximo 50).
+   * Condicao 3: A senha nao pode ter menos do que 6 caracteres (no minimo 6).
+   * Condicao 4: A senha nao pode ter caracteres em branco ' '.
+   */
+   /// @param password
+   /// @return 0 - senha invalida; 1 - senha valida
+    bool validPassword(const std::string& password) const;
+
+    /// @brief verificar se a matricula segue os seguintes requisitos:
+    /*
+     * Condicao 1: 4 primeiros digitos serem maior que 2010.
+     * Condicao 2: Digitos 5 e 6 serem digitos de identificacao de curso.
+     * Condicao 3: 4 ultimos digitos serem de: 0-100 = (admin); 101-2000 = (professor); 2001-9999 = (aluno).
+     */
+    /// @param matrichula
+    /// @return 0 - matricula invalida; 1 - matricula valida
+    bool validMatricula(unsigned int matricula) const;
+  
 };
 
-#endif
+class Aluno : public User {
+private:
+   std::map<std::string, Informacoes> materias;
+public:
+    Aluno(unsigned int matricula, const std::string& senha);
+
+    /// @brief permite o aluno visualizar suas notas de determinada materia
+    /// @param materia
+    void visuNotas(const std::string& materia);
+
+    void visuDadosMatricula() const override;
+
+    /// @brief permite o aluno visualizar quais materias ele esta cursando, juntamente com o dia e horario da mesma
+    void visuMaterias();
+};
+
+class Professor : public User {
+private:
+   std::map<std::string, Informacoes> materias;
+public:
+    /// @brief preenche todos os parametros de user baseado nos dados vinculados a matricula no professor.txt
+    /// @param matricula 
+    /// @param senha 
+    Professor(unsigned int matricula, const std::string& senha);
+   
+    /// @brief cria avaliacoes e da notas a mesma ou modifica a nota de uma avaliacao ja existente
+    /// @param avaliacao
+    /// @param notas
+    void addNota(const std::string& materia,unsigned int matricula, const float nota);
+
+    /// @brief permite a visualizacao das notas de todos os alunos, especificados pelo numero de matricula
+    void visuNotasTodos();
+
+    /// @brief deleta determinada avaliacao do sistema 1,2,3 ou quarta avaliaçao, deve apagar esta nota de  os alunos matriculados nesta materia.
+    /// @param avaliacao
+    void apagar(int avaliacao, const std::string& materia,unsigned int matriculaAluno);
+
+    void visuDadosMatricula() const override;
+};
+
+class Admin : public User {
+public:
+      
+    /// @brief preenche todos os parametros de user baseado nos dados vinculados a matricula no admin.txt
+    /// @param matricula 
+    /// @param senha 
+    Admin(unsigned int matricula, const std::string& senha);
+
+    /// @brief Insere um novo aluno em alunos.txt, retorna 1 se o aluno foi inserido devidamente no txt, 0 c.c
+    /// @param nome 
+    /// @param matricula 
+    /// @param senha 
+    /// @param dataNasc 
+    /// @param curso 
+    /// @param telefone 
+    /// @param nacionalidade 
+    /// @param email 
+    /// @param CPF 
+    /// @param sexo 
+    /// @return 
+    bool insertAluno(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
+                     const std::string& telefone, const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo);
+    /// @brief Insere um novo aluno em professores.txt, retorna 1 se o professor foi inserido devidamente no txt, 0 c.c
+    /// @param nome
+    /// @param matricula
+    /// @param senha
+    /// @param dataNasc
+    /// @param curso
+    /// @param telefone
+    /// @param nacionalidade
+    /// @param email
+    /// @param CPF
+    /// @param sexo
+    /// @return
+    bool insertProfessor(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
+                         const std::string& telefone, const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo);
+    /// @brief Insere um novo aluno em Admin.txt, retorna 1 se o admin foi inserido devidamente no txt, 0 c.c
+    /// @param nome 
+    /// @param matricula 
+    /// @param senha 
+    /// @param dataNasc 
+    /// @param curso 
+    /// @param telefone 
+    /// @param nacionalidade 
+    /// @param email 
+    /// @param CPF 
+    /// @param sexo 
+    /// @return 
+    bool insertAdmin(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
+                     const std::string& telefone, const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo);
+
+    /// @brief inseri a materia no aluno matriculado em aluno.txt 
+    /// @param matricula 
+    /// @param materia 
+    void insertMateria(unsigned int matricula, const std::string& materia);
+    /// @brief inseri uma materia nova em materia.txt
+    /// @param matricula 
+    /// @param materia 
+    void CriaMateria(const std::string& materia, Informacoes info);
+    /// @brief Tranca a materia do aluno possuidor de matricula, para isso mudar o numero referente ao trancamento em aluno.txt
+    /// @param materia 
+    /// @param matricula
+    void trancarMateria(unsigned int matricula, const std::string& materia);
+    /// @brief Ativa o reg esp do aluno possuidor de matricula, para isso mudar o numero referente ao reg esp em aluno.txt
+    /// @param matricula
+    void ativarRegEsp(unsigned int matricula);
+    /// @brief imprime os dados de matricula de cada aluno, por exemplo imprime de um aluno, quando apertar enter imprime de outro aluno e assim por diante, quando apertar 0 sai da função.
+    void visuDadosMatriculaTodos();
+    /// @brief imprime os dados de matricula do aluno/professor possuidor da matricula
+    void visuDadosMatricula(unsigned int matricula);
+};
+
+/// @brief 
+/// @param matricula 
+/// @param senha 
+/// @return 
+std::shared_ptr<User> login(unsigned int matricula, const std::string& senha);
+
+#endif // _SISTEMA_EDUCACIONAL_H
