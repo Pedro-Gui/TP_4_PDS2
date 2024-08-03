@@ -5,6 +5,9 @@
 
 #define SUCESSO 0
 
+// g++ -std=c++11 -Wall -o main main.cpp Sistema_Educacional.cpp
+// .\main
+
 int main(){
     std::string password = " ";
     unsigned int matricula = 0;

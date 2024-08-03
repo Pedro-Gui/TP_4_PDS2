@@ -11,7 +11,7 @@
     {
         std::vector<std::string> dia;
         std::string horario;
-        std::vector<float> notas;   
+        std::vector<float> notas;
         bool condTrancado;
         int cargaHoraria;
         int NumeroAvaliacoes;
@@ -20,9 +20,9 @@
 
 class User {
 protected:
-    std::string nome;      
+    std::string nome;
     unsigned int matricula; // 2023 ano 95 curso 1627 
-    std::string senha;      
+    std::string senha;
     std::string dataNasc;
     std::string curso;
     std::string telefone;
@@ -30,8 +30,7 @@ protected:
     std::string email;
     std::string CPF;
     std::string sexo;
-    int NSG;
-    bool regEspecial;
+    
 
 public:
     virtual ~User() = default;
@@ -65,7 +64,7 @@ public:
      * Condicao 2: Digitos 5 e 6 serem digitos de identificacao de curso.
      * Condicao 3: 4 ultimos digitos serem de: 0-100 = (admin); 101-2000 = (professor); 2001-9999 = (aluno).
      */
-    /// @param matrichula
+    /// @param matricula
     /// @return 0 - matricula invalida; 1 - matricula valida
     bool validMatricula(unsigned int matricula) const;
   
@@ -73,6 +72,8 @@ public:
 
 class Aluno : public User {
 private:
+        int NSG;
+        bool regEspecial;
    std::map<std::string, Informacoes> materias;
 public:
     Aluno(unsigned int matricula, const std::string& senha);
@@ -89,7 +90,9 @@ public:
 
 class Professor : public User {
 private:
-   std::map<std::string, Informacoes> materias;
+        
+   // materia e dados do aluno
+   std::map<std::string, std::shared_ptr<Aluno>> Aluno;
 public:
     /// @brief preenche todos os parametros de user baseado nos dados vinculados a matricula no professor.txt
     /// @param matricula 
@@ -102,7 +105,7 @@ public:
     void addNota(const std::string& materia,unsigned int matricula, const float nota);
 
     /// @brief permite a visualizacao das notas de todos os alunos, especificados pelo numero de matricula
-    void visuNotasTodos();
+    void visuNotasTodos(std::string materia);
 
     /// @brief deleta determinada avaliacao do sistema 1,2,3 ou quarta avaliaçao, deve apagar esta nota de  os alunos matriculados nesta materia.
     /// @param avaliacao
@@ -112,6 +115,8 @@ public:
 };
 
 class Admin : public User {
+private:
+    std::map<std::string, std::shared_ptr<User>> DadosAll;
 public:
       
     /// @brief preenche todos os parametros de user baseado nos dados vinculados a matricula no admin.txt
