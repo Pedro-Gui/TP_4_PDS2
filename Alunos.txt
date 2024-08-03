@@ -1,7 +1,7 @@
-Caio Pereira 2024008224 G7xB2eL9kQ4t 15/03/1998 Masculino Engenharia Elétrica 123.456.789-01 (31)98765-4321 caio.pereira2024@gmail.com 1.2024 82 0 PDS2,0,10,15,22,40;Probabilidade,0,15,15,15,15;Calculo2,0,10,20,30,0;
-Daniela Moraes 2023064985 pinto6857320 22/08/2000 Feminino Medicina 234.567.890-12 (31)97654-3210 daniela.moraes2000@gmail.com 2.2023 89 1 PDS2,0,10,15,22,40;Probabilidade,1;Calculo2,0,10,20,30,0;
-Beatriz Ferreira 2023068145 vR3pJ8fW1Z7m 09/11/1994 Feminino Direito 345.678.901-23 (31)95543-2178 beatriz.ferreira1994@gmail.com 1.2023 74 0 PDS2,0,10,15,22,40;Probabilidade,0,15,15,15,15;Calculo2,0,10,20,30,0;
-David Santos 2022006402 Minecraft1.7.10 07/07/1996 Masculino Administração 456.789.012-34 (32)99876-5432 david.santos1996@gmail.com 2.2022 77 0 PDS2,0,10,15,22,40;Probabilidade,0,15,15,15,15;Calculo2,0,10,20,30,0;
-Camila Martins 2024002927 A5hN2rL9kT4b 31/05/2002 Feminino Psicologia 567.890.123-45 (31)97784-1234 camila.martins2002@gmail.com 1.2024 91 0 PDS2,0,10,15,22,40;Probabilidade,0,15,15,15,15;Calculo2,0,10,20,30,0;
-Eduardo Oliveira 2024002568 M8xY6wQ2vR5c 14/02/1990 Masculino Engenharia de Produção 678.901.234-56 (21)98765-4321 eduardo.oliveira1990@gmail.com 2.2024 84 0 PDS2,0,10,15,22,40;Probabilidade,0,15,15,15,15;Calculo2,0,10,20,30,0;
-Eduarda Nunes 2022003566 P1nG9hT7kL3j 28/12/2004 Feminino Ciências Biológicas 789.012.345-67 (21)97654-3210 eduarda.nunes2004@gmail.com 1.2023 68 1 PDS2,0,10,15,22,40;Probabilidade,0,15,15,15,15;Calculo2,0,10,20,30,0;
+Caio Pereira;2024008224;G7xB2eL9kQ4t;15/03/1998;Masculino;Engenharia Elétrica;123.456.789-01;(31)98765-4321;caio.pereira2024@gmail.com;82;0;PDS2,0,10,15,22,40 Probabilidade,0,15,15,15,15 Calculo2,0,10,20,30,0;
+Daniela Moraes;2023064985;pinto6857320;22/08/2000;Feminino;Medicina;234.567.890-12;(31)97654-3210;daniela.moraes2000@gmail.com;89;1;PDS2,0,10,15,22,40 Probabilidade,0,15,15,15,15 Calculo2,0,10,20,30,0;
+Beatriz Ferreira 2023068145;vR3pJ8fW1Z7m;09/11/1994;Feminino;Direito;345.678.901-23;(31)95543-2178;beatriz.ferreira1994@gmail.com;74;0;PDS2,0,10,15,22,40 Probabilidade,0,15,15,15,15 Calculo2,0,10,20,30,0;
+David Santos;2022006402;Minecraft1.7.10;07/07/1996;Masculino;Administração;456.789.012-34;(32)99876-5432;david.santos1996@gmail.com;77;0;PDS2,0,10,15,22,40 Probabilidade,0,15,15,15,15 Calculo2,0,10,20,30,0;
+Camila Martins;2024002927;A5hN2rL9kT4b;31/05/2002;Feminino;Psicologia;567.890.123-45;(31)97784-1234;camila.martins2002@gmail.com;91;0;PDS2,0,10,15,22,40 Probabilidade,0,15,15,15,15 Calculo2,0,10,20,30,0;
+Eduardo;Oliveira;2024002568;M8xY6wQ2vR5c;14/02/1990;Masculino;Engenharia de Produção;678.901.234-56;(21)98765-4321;eduardo.oliveira1990@gmail.com;84;0;PDS2,0,10,15,22,40 Probabilidade,0,15,15,15,15 Calculo2,0,10,20,30,0;
+Eduarda Nunes;2022003566;P1nG9hT7kL3j;28/12/2004;Feminino;Ciências;Biológicas;789.012.345-67;(21)97654-3210;eduarda.nunes2004@gmail.com;68;1;PDS2,0,10,15,22,40 Probabilidade,0,15,15,15,15 Calculo2,0,10,20,30,0;
