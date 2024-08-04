@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <fstream>
+#include <iostream>
    
     struct Informacoes
     {
@@ -15,7 +17,6 @@
         bool condTrancado;
         int cargaHoraria;
         int NumeroAvaliacoes;
-        std::string Professor;
     };
 
 class User {
@@ -24,7 +25,6 @@ protected:
     unsigned int matricula; // 2023 ano 95 curso 1627 
     std::string senha;
     std::string dataNasc;
-    std::string curso;
     std::string telefone;
     std::string nacionalidade;
     std::string email;
@@ -74,9 +74,13 @@ class Aluno : public User {
 private:
         int NSG;
         bool regEspecial;
-   std::map<std::string, Informacoes> materias;
+        std::string curso;
+   std::map<std::string, Informacoes> materiasMap;
+
 public:
-    Aluno(unsigned int matricula, const std::string& senha);
+    Aluno(const std::string& nome2, unsigned int matricula2, const std::string& senha2, const std::string& dataNasc2, const std::string& curso2,
+    const std::string& telefone2, const std::string& nacionalidade2, const std::string& email2, const std::string& CPF2, const std::string& sexo2, int NSG2,
+        bool regEspecial2, const std::string& materia2);
 
     /// @brief permite o aluno visualizar suas notas de determinada materia
     /// @param materia
@@ -92,12 +96,14 @@ class Professor : public User {
 private:
         
    // materia e dados do aluno
-   std::map<std::string, std::shared_ptr<Aluno>> Aluno;
+   std::map<std::string, std::shared_ptr<Aluno>> Alunos;
+   std::string curso;
 public:
     /// @brief preenche todos os parametros de user baseado nos dados vinculados a matricula no professor.txt
     /// @param matricula 
     /// @param senha 
-    Professor(unsigned int matricula, const std::string& senha);
+    Professor(const std::string& nome2, unsigned int matricula2, const std::string& senha2, const std::string& dataNasc2, const std::string& curso2,
+    const std::string& telefone2, const std::string& nacionalidade2, const std::string& email2, const std::string& CPF2, const std::string& sexo2);
    
     /// @brief cria avaliacoes e da notas a mesma ou modifica a nota de uma avaliacao ja existente
     /// @param avaliacao
@@ -122,7 +128,8 @@ public:
     /// @brief preenche todos os parametros de user baseado nos dados vinculados a matricula no admin.txt
     /// @param matricula 
     /// @param senha 
-    Admin(unsigned int matricula, const std::string& senha);
+    Admin(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& telefone,
+    const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo);
 
     /// @brief Insere um novo aluno em alunos.txt, retorna 1 se o aluno foi inserido devidamente no txt, 0 c.c
     /// @param nome 
@@ -137,7 +144,8 @@ public:
     /// @param sexo 
     /// @return 
     bool insertAluno(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
-                     const std::string& telefone, const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo);
+                     const std::string& telefone, const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo, int NSG,
+        bool regEspecial);
     /// @brief Insere um novo aluno em professores.txt, retorna 1 se o professor foi inserido devidamente no txt, 0 c.c
     /// @param nome
     /// @param matricula
@@ -164,8 +172,8 @@ public:
     /// @param CPF 
     /// @param sexo 
     /// @return 
-    bool insertAdmin(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
-                     const std::string& telefone, const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo);
+    bool insertAdmin(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc,const std::string& telefone, 
+                    const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo);
 
     /// @brief inseri a materia no aluno matriculado em aluno.txt 
     /// @param matricula 
@@ -185,7 +193,9 @@ public:
     /// @brief imprime os dados de matricula de cada aluno, por exemplo imprime de um aluno, quando apertar enter imprime de outro aluno e assim por diante, quando apertar 0 sai da função.
     void visuDadosMatriculaTodos();
     /// @brief imprime os dados de matricula do aluno/professor possuidor da matricula
-    void visuDadosMatricula(unsigned int matricula);
+    void visuDadosMatriculaOutros(unsigned int matricula);
+
+    void visuDadosMatricula() const override;
 };
 
 /// @brief 
