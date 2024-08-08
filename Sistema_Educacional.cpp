@@ -202,6 +202,37 @@ bool Banco_de_dados::validMatricula(unsigned int matricula) const {
     return true;
 }
 
+void preencheAlunos(){
+    Banco_de_dados db;
+    std::ifstream Logins("Login.txt");
+    std::string linha;
+
+        if (!Logins.is_open()) {
+            std::cerr << "Erro ao abrir o arquivo!" << std::endl;
+        }else{
+
+        while (std::getline(Logins, linha)) {
+            std::size_t pos = linha.find(';');
+            if (pos != std::string::npos) {
+                std::string matriculaTXT = linha.substr(0, pos);
+                std::string senhaTXT = linha.substr(pos + 1, linha.length() - pos - 2);
+
+                int identificacao = std::stoi(matriculaTXT.substr(6, 10)); //admin 0-100, professor 101-2000, aluno 2001-9999
+
+                if (identificacao >= 2001 && identificacao <= 9999) { //se for aluno.....
+                    Logins.close();
+                    std::shared_ptr<User> user = db.getUser(std::stoi(matriculaTXT));
+                    std::shared_ptr<Aluno> aluno = std::dynamic_pointer_cast<Aluno>(user);
+                    
+                    Alunos.insert({matriculaTXT,aluno});
+                }
+            }
+        }
+        Logins.close();
+        }
+    
+}
+
 
 Aluno::Aluno(const std::string& nome2, unsigned int matricula2, const std::string& senha2, const std::string& dataNasc2, const std::string& curso2,
     const std::string& telefone2, const std::string& nacionalidade2, const std::string& email2, const std::string& CPF2, const std::string& sexo2, int NSG2,
@@ -219,12 +250,14 @@ Aluno::Aluno(const std::string& nome2, unsigned int matricula2, const std::strin
     NSG = NSG2;
     regEspecial = regEspecial2;
     //Separando a string materia, a cada " " é uma nova materia.
+    // materia2 = "PDS2,0,10,15,22,40 Probabilidade,0,15,15,15,15 Calculo2,0,10,20,30,01 "
     std::vector<std::string> VectorMaterias;
     size_t pos = 0, new_pos = materia2.find(' ');
 
     while (materia2.find(' ', pos) != std::string::npos) {
         VectorMaterias.push_back(materia2.substr(pos, new_pos - pos));
         pos = new_pos + 1; new_pos = materia2.find(' ', pos);
+       
 
     }VectorMaterias.push_back(materia2.substr(pos, materia2.length() - pos - 1));
 
@@ -372,25 +405,24 @@ Professor::Professor(const std::string& nome2, unsigned int matricula2, const st
 }
 
 void Professor::addNota(const std::string& materia, unsigned int matricula, const float nota) {
-    // Itera sobre todos os alunos para encontrar o aluno com a matrícula correta
+
     for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
         auto aluno = it->second; 
 
-        // Verifica se a matrícula corresponde
         if (aluno->matricula == matricula) {
             auto materia_it = aluno->materiasMap.find(materia);
             if (materia_it == aluno->materiasMap.end()) {
                 std::cout << "Matéria " << materia << " não encontrada para o aluno com matrícula " << matricula << "." << std::endl;
-                return;
+                
             }
             else {
-                // Adiciona a nota na lista de notas da matéria
+              //   Adiciona a nota na lista de notas da matéria
                 Informacoes& info = materia_it->second;
                 info.notas.push_back(nota);
 
-                // Mensagem de sucesso (opcional)
+               //  Mensagem de sucesso (opcional)
                 std::cout << "Nota " << nota << " adicionada com sucesso para a matéria " << materia << " do aluno com matrícula " << matricula << "." << std::endl;
-                return;
+                
             }
         }
     }
@@ -405,14 +437,19 @@ void Professor::visuNotasTodos(std::string materia) {
     }
 }
 
-void Professor::apagar(int avaliacao, const std::string& materia, unsigned int matriculaAluno) {
-    for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
-        auto materia_it = it->second->materiasMap.find(materia);
-        Informacoes info = materia_it->second;
-        auto pos = info.notas.begin() + (avaliacao - 1);
-        info.notas.erase(pos);
-    }
-    std::cout << "Apagando avaliação: " << avaliacao << std::endl;
+void Professor::update(int avaliacao, const std::string& materia, float novaNota, unsigned int matriculaAluno) {
+    
+    /*
+    auto it = Alunos; // Acessa o map Alunos
+
+    it.second -> auto x; //Acessa shared_ptr Aluno 
+
+    x.second -> auto y; //Acessa materiasMap
+
+    y.second -> auto z; //Acessa informações 
+
+    z.notas[avaliacao] = novaNota; //Apaga a nota
+    */
 }
 
 void Professor::visuDadosMatricula() const {
@@ -444,39 +481,178 @@ Admin::Admin(const std::string& nome2, unsigned int matricula2, const std::strin
     //preencher o map Dados all em outra função e chamar-la antes de visu dados todos
 }
 
-bool Admin::insertAluno(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
+void Admin::preencheDados(){
+   Banco_de_dados db;
+    std::ifstream Logins("Login.txt");
+    std::string linha;
+        if (!Logins.is_open()) {
+            std::cerr << "Erro ao abrir o arquivo!" << std::endl;
+           
+        }
+
+        while (std::getline(Logins, linha)) {
+            std::size_t pos = linha.find(';');
+            if (pos != std::string::npos) {
+                std::string matriculaTXT = linha.substr(0, pos);
+                std::string senhaTXT = linha.substr(pos + 1, linha.length() - pos - 2);
+
+                // std::cout << "Linha: " << linha <<", Matricula: " << matriculaTXT << ", senha: " << senhaTXT << std::endl; //Verificando as entradas
+                std::shared_ptr<User> user = db.getUser(matricula);
+
+                DadosAll.insert({matriculaTXT,user});    
+                
+            }
+        }
+        Logins.close();
+
+}
+
+void Admin::insertAluno(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
     const std::string& telefone, const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo, int NSG,
     bool regEspecial) {
-    std::cout << "Inserindo aluno: " << nome << std::endl;
-    return true;
+        std::string materias = " ";
+        if (DadosAll.find(std::to_string(matricula)) == DadosAll.end()) {
+            std::shared_ptr<Aluno> aluno = std::make_shared<Aluno>(nome, matricula, senha, dataNasc, curso, telefone, nacionalidade, email, CPF, sexo, NSG, regEspecial, materias);
+            DadosAll.insert({std::to_string(matricula),aluno});
+        }
+        else{
+            std::cout << "Erro: Professor com matrícula " << matricula << " já existe." << std::endl;
+        }       
 }
 
-bool Admin::insertProfessor(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
+void Admin::insertProfessor(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
     const std::string& telefone, const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo) {
-    std::cout << "Inserindo professor: " << nome << std::endl;
-    return true;
-}
+        if (DadosAll.find(std::to_string(matricula)) == DadosAll.end()) {
+            std::shared_ptr<Professor> professor = std::make_shared<Professor>(nome, matricula, senha, dataNasc, curso, telefone, nacionalidade, email, CPF, sexo);
+            DadosAll.insert({std::to_string(matricula),professor});
+        }else{
+             std::cout << "Erro: Professor com matrícula " << matricula << " já existe." << std::endl;
+        }
+    }
 
-bool Admin::insertAdmin(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& telefone,
+void Admin::insertAdmin(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& telefone,
     const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo) {
-    //...
-    return true;
+        
+        if (DadosAll.find(std::to_string(matricula)) == DadosAll.end()) {
+            std::shared_ptr<Admin> admin = std::make_shared<Admin>(nome, matricula, senha, dataNasc, telefone, nacionalidade, email, CPF, sexo);
+             DadosAll.insert({std::to_string(matricula),admin});
+        }
+        else{
+            std::cout << "Erro: Admin com matrícula " << matricula << " já existe." << std::endl;
+        }
+
 }
 
 void Admin::insertMateria(unsigned int matricula, const std::string& materia) {
-    //...
-}
+
+    auto it = DadosAll.find(std::to_string(matricula));
+    
+
+    if (it != DadosAll.end()) {
+  
+        std::shared_ptr<Aluno> alunoPtr = std::dynamic_pointer_cast<Aluno>(it->second);
+        
+ 
+        if (alunoPtr) {
+            
+         
+            
+        } else {
+            std::cout << "A matrícula " << matricula << " não corresponde a um aluno.\n";
+        }
+    } else {
+        std::cout << "A matrícula " << matricula << " não foi encontrada.\n";
+    }
+} 
+
 
 void Admin::trancarMateria(unsigned int matricula, const std::string& materia) {
-    //...
+    // Itera sobre todos os alunos para encontrar o aluno com a matrícula correta
+    for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
+        auto aluno = it->second; 
+
+        // Verifica se a matrícula corresponde
+        if (aluno->matricula == matricula) {
+            auto materia_it = aluno->materiasMap.find(materia);
+            if (materia_it == aluno->materiasMap.end()) {
+                std::cout << "Matéria " << materia << " não encontrada para o aluno com matrícula " << matricula << "." << std::endl;
+                
+            }
+            else {
+              //   Tranca a matéria;
+                Informacoes& info = materia_it->second;
+                info.condTrancado = true;
+
+               //  Mensagem de sucesso (opcional)
+                std::cout << "Matéria " << materia << " trancada com sucesso." << std::endl;
+                
+            }
+        }
+    }
+    std::cout << "Aluno com matrícula " << matricula << " não encontrado." << std::endl;
 }
 
-void Admin::CriaMateria(const std::string& materia, Informacoes info) {
+void Admin::CriaMateria(const std::string& materia, std::vector<std::string> dia, const std::string& horario, int cargaHoraria) {
+            Informacoes info;
+            info.dia = dia;
+            info.horario = horario;
+            info.cargaHoraria = cargaHoraria;
+            info.condTrancado = false;
+            info.NumeroAvaliacoes = 0;
 
+    std::string fileName = "Materia.txt";
+    std::ifstream file(fileName, std::ios::app);
+    std::string linha;
+    bool materiaExiste = false;
+    if (file.is_open()) {
+                while (std::getline(file, linha)) {
+                    std::size_t pos = linha.find(';');
+                    if (pos != std::string::npos) {
+
+                        std::string MateriaTXT = linha.substr(0,pos-1);
+
+                        if (materia == MateriaTXT) {
+                           materiaExiste = true;
+
+                        }
+                    }
+                }
+        file.close();
+    }
+    
+    
+    if(!materiaExiste){
+        std::ofstream file2(fileName, std::ios::app);
+        std::string MateriaAdicionada = materia+";"+ std::to_string(cargaHoraria);+";"; // "Probabilidade;60;segunda,quarta;9;";
+                    for(auto diax : dia){
+                        MateriaAdicionada += diax+",";
+                    }MateriaAdicionada.pop_back();
+                    MateriaAdicionada += ";"+horario+";";
+                    
+
+
+        if (file2.is_open()) {
+            file2 << MateriaAdicionada << std::endl;
+            file2.close();
+
+            std::cout << "String adicionada ao final de " << fileName << " com sucesso!" << std::endl;
+        } else {
+            std::cerr << "Erro ao abrir o arquivo " << fileName << "." << std::endl;
+        }
+    }
 }
 
 void Admin::ativarRegEsp(unsigned int matricula) {
-    //...
+    // Itera sobre todos os alunos para encontrar o aluno com a matrícula correta
+    for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
+        auto aluno = it->second; 
+
+        // Verifica se a matrícula corresponde
+        if (aluno->matricula == matricula) {
+            aluno->regEspecial = true;
+        }
+    }
+    std::cout << "Aluno com matrícula " << matricula << " não encontrado." << std::endl;
 }
 
 void Admin::visuDadosMatriculaTodos() {
@@ -485,24 +661,39 @@ void Admin::visuDadosMatriculaTodos() {
     for (auto it : DadosAll) {
         if (std::shared_ptr<Aluno> aluno = std::dynamic_pointer_cast<Aluno>(it.second)) {
             aluno->visuDadosMatricula();
+            std::cout<< std::endl << "Precione enter para ver a proxima matricula" << std::endl;
+            getchar();
         }
     }
     std::cout << "Professores:" << std::endl;
     for (auto it : DadosAll) {
         if (std::shared_ptr<Professor> professor = std::dynamic_pointer_cast<Professor>(it.second)) {
             professor->visuDadosMatricula();
+            std::cout<< std::endl << "Precione enter para ver a proxima matricula" << std::endl;
+            getchar();
         }
     }
     std::cout << "Admins:" << std::endl;
     for (auto it : DadosAll) {
         if (std::shared_ptr<Admin> admin = std::dynamic_pointer_cast<Admin>(it.second)) {
             admin->visuDadosMatricula();
+            std::cout<< std::endl << "Precione enter para ver a proxima matricula" << std::endl;
+            getchar();
         }
     }
+    std::cout<< "Matriculas finalizadas." << std::endl;
+           
 }
 
 void Admin::visuDadosMatriculaOutros(unsigned int matricula) {
-    //...
+
+    auto it = DadosAll.find(std::to_string(matricula));
+
+    if (it != DadosAll.end()) {
+        it->second->visuDadosMatricula();
+    } else {
+        std::cout << "Erro: Matrícula " << matricula << " não encontrada." << std::endl;
+    }
 }
 
 void Admin::visuDadosMatricula() const {

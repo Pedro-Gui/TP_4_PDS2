@@ -34,7 +34,7 @@ protected:
 
 public:
     virtual ~User() = default;
-
+    
     /// @brief Imprime todos os dados de matricula sequencialmente;
     /// nome: nome \n matricula: matricula \n ... 
     virtual void visuDadosMatricula() const = 0;
@@ -72,6 +72,10 @@ public:
 
 class Aluno : public User {
 private:
+
+        friend class Professor;
+        friend class Admin;
+
         int NSG;
         bool regEspecial;
         std::string curso;
@@ -94,10 +98,10 @@ public:
 
 class Professor : public User {
 private:
-        
+    friend class Admin;
    // materia e dados do aluno
-   std::map<std::string, std::shared_ptr<Aluno>> Alunos;
    std::string curso;
+   float novaNota;
 public:
     /// @brief preenche todos os parametros de user baseado nos dados vinculados a matricula no professor.txt
     /// @param matricula 
@@ -110,21 +114,26 @@ public:
     /// @param notas
     void addNota(const std::string& materia,unsigned int matricula, const float nota);
 
+    void PreencheAlunos(const std::string& materia);
+
     /// @brief permite a visualizacao das notas de todos os alunos, especificados pelo numero de matricula
     void visuNotasTodos(std::string materia);
 
     /// @brief deleta determinada avaliacao do sistema 1,2,3 ou quarta avaliaçao, deve apagar esta nota de  os alunos matriculados nesta materia.
     /// @param avaliacao
-    void apagar(int avaliacao, const std::string& materia,unsigned int matriculaAluno);
+    void update(int avaliacao, const std::string& materia, float novaNota,unsigned int matriculaAluno);
 
     void visuDadosMatricula() const override;
+
+    ~Professor();
 };
 
 class Admin : public User {
 private:
     std::map<std::string, std::shared_ptr<User>> DadosAll;
 public:
-      
+    /// @brief Preenche o map DadosAll com cada tipo de usuario
+    void preencheDados();
     /// @brief preenche todos os parametros de user baseado nos dados vinculados a matricula no admin.txt
     /// @param matricula 
     /// @param senha 
@@ -143,7 +152,7 @@ public:
     /// @param CPF 
     /// @param sexo 
     /// @return 
-    bool insertAluno(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
+    void insertAluno(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
                      const std::string& telefone, const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo, int NSG,
         bool regEspecial);
     /// @brief Insere um novo aluno em professores.txt, retorna 1 se o professor foi inserido devidamente no txt, 0 c.c
@@ -158,7 +167,7 @@ public:
     /// @param CPF
     /// @param sexo
     /// @return
-    bool insertProfessor(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
+    void insertProfessor(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc, const std::string& curso,
                          const std::string& telefone, const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo);
     /// @brief Insere um novo aluno em Admin.txt, retorna 1 se o admin foi inserido devidamente no txt, 0 c.c
     /// @param nome 
@@ -172,17 +181,19 @@ public:
     /// @param CPF 
     /// @param sexo 
     /// @return 
-    bool insertAdmin(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc,const std::string& telefone, 
+    void insertAdmin(const std::string& nome, unsigned int matricula, const std::string& senha, const std::string& dataNasc,const std::string& telefone, 
                     const std::string& nacionalidade, const std::string& email, const std::string& CPF, const std::string& sexo);
 
     /// @brief inseri a materia no aluno matriculado em aluno.txt 
     /// @param matricula 
     /// @param materia 
     void insertMateria(unsigned int matricula, const std::string& materia);
+
+
     /// @brief inseri uma materia nova em materia.txt
     /// @param matricula 
     /// @param materia 
-    void CriaMateria(const std::string& materia, Informacoes info);
+    void CriaMateria(const std::string& materia, std::vector<std::string> dia, const std::string& horario, int cargaHoraria);
     /// @brief Tranca a materia do aluno possuidor de matricula, para isso mudar o numero referente ao trancamento em aluno.txt
     /// @param materia 
     /// @param matricula
@@ -190,6 +201,7 @@ public:
     /// @brief Ativa o reg esp do aluno possuidor de matricula, para isso mudar o numero referente ao reg esp em aluno.txt
     /// @param matricula
     void ativarRegEsp(unsigned int matricula);
+    
     /// @brief imprime os dados de matricula de cada aluno, por exemplo imprime de um aluno, quando apertar enter imprime de outro aluno e assim por diante, quando apertar 0 sai da função.
     void visuDadosMatriculaTodos();
     /// @brief imprime os dados de matricula do aluno/professor possuidor da matricula
@@ -203,5 +215,6 @@ public:
 /// @param senha 
 /// @return 
 std::shared_ptr<User> login(unsigned int matricula, const std::string& senha);
-
+std::map<std::string, std::shared_ptr<Aluno>> Alunos;
+void preencheAlunos();
 #endif // _SISTEMA_EDUCACIONAL_H
