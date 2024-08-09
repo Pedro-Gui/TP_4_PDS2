@@ -438,18 +438,29 @@ void Professor::visuNotasTodos(std::string materia) {
 }
 
 void Professor::update(int avaliacao, const std::string& materia, float novaNota, unsigned int matriculaAluno) {
-    
     /*
-    auto it = Alunos; // Acessa o map Alunos
+    for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
+        auto aluno = it->second; 
 
-    it.second -> auto x; //Acessa shared_ptr Aluno 
+        if (aluno->matricula == matricula) {
+            auto materia_it = aluno->materiasMap.find(materia);
+            if (materia_it == aluno->materiasMap.end()) {
+                std::cout << "Matéria " << materia << " não encontrada para o aluno com matrícula " << matricula << "." << std::endl;
+                
+            }
+            else {
+              //   Adiciona a nota na lista de notas da matéria
+                Informacoes& info = materia_it->second;
+                info.notas.push_back(nota);
 
-    x.second -> auto y; //Acessa materiasMap
-
-    y.second -> auto z; //Acessa informações 
-
-    z.notas[avaliacao] = novaNota; //Apaga a nota
+               //  Mensagem de sucesso (opcional)
+                std::cout << "Nota " << nota << " adicionada com sucesso para a matéria " << materia << " do aluno com matrícula " << matricula << "." << std::endl;
+                
+            }
+        }
+    }
     */
+    std::cout << "Aluno com matrícula " << matricula << " não encontrado." << std::endl;
 }
 
 void Professor::visuDadosMatricula() const {
@@ -514,9 +525,10 @@ void Admin::insertAluno(const std::string& nome, unsigned int matricula, const s
         if (DadosAll.find(std::to_string(matricula)) == DadosAll.end()) {
             std::shared_ptr<Aluno> aluno = std::make_shared<Aluno>(nome, matricula, senha, dataNasc, curso, telefone, nacionalidade, email, CPF, sexo, NSG, regEspecial, materias);
             DadosAll.insert({std::to_string(matricula),aluno});
+            std::cout<< nome << " adicionado como aluno com sucesso!" << std::endl;
         }
         else{
-            std::cout << "Erro: Professor com matrícula " << matricula << " já existe." << std::endl;
+            std::cout << "Erro: Aluno com matrícula " << matricula << " já existe." << std::endl;
         }       
 }
 
@@ -525,6 +537,7 @@ void Admin::insertProfessor(const std::string& nome, unsigned int matricula, con
         if (DadosAll.find(std::to_string(matricula)) == DadosAll.end()) {
             std::shared_ptr<Professor> professor = std::make_shared<Professor>(nome, matricula, senha, dataNasc, curso, telefone, nacionalidade, email, CPF, sexo);
             DadosAll.insert({std::to_string(matricula),professor});
+            std::cout << nome << " adicionado como professor com sucesso!" << std::endl;
         }else{
              std::cout << "Erro: Professor com matrícula " << matricula << " já existe." << std::endl;
         }
@@ -536,6 +549,7 @@ void Admin::insertAdmin(const std::string& nome, unsigned int matricula, const s
         if (DadosAll.find(std::to_string(matricula)) == DadosAll.end()) {
             std::shared_ptr<Admin> admin = std::make_shared<Admin>(nome, matricula, senha, dataNasc, telefone, nacionalidade, email, CPF, sexo);
              DadosAll.insert({std::to_string(matricula),admin});
+             std::cout<< nome << " adicionado como admin com sucesso!" << std::endl;
         }
         else{
             std::cout << "Erro: Admin com matrícula " << matricula << " já existe." << std::endl;
@@ -549,14 +563,9 @@ void Admin::insertMateria(unsigned int matricula, const std::string& materia) {
     
 
     if (it != DadosAll.end()) {
-  
         std::shared_ptr<Aluno> alunoPtr = std::dynamic_pointer_cast<Aluno>(it->second);
-        
- 
-        if (alunoPtr) {
-            
-         
-            
+        if (alunoPtr) {                           //db.getMateria retorna um struct informações da materia
+            alunoPtr->materiasMap.insert({materia,db.getMateria(materia)});   
         } else {
             std::cout << "A matrícula " << matricula << " não corresponde a um aluno.\n";
         }
