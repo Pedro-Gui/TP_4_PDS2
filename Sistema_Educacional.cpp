@@ -172,6 +172,7 @@ std::shared_ptr<User> Banco_de_dados::getUser(unsigned int matricula) {
 
 }
 
+// Tem que conferir sequencia corretamente e não pode haver ;
 bool Banco_de_dados::validPassword(const std::string& password) const {
     if (password.find("123") != std::string::npos) {
         std::cout << "A sequencia 123 nao eh permitida!" << std::endl;
@@ -369,7 +370,7 @@ void Aluno::visuDadosMatricula() const {
     std::cout << "Sexo: " << sexo << std::endl;
     std::string aux = regEspecial ? "SIM" : "NAO";
     std::cout << "Regime especial: " << aux << std::endl;
-    std::cout << "NSG: " << NSG << std::endl;
+    std::cout << "NSG: " << NSG << std::endl;  // TEm q calcular ainda
 
 }
 
@@ -401,9 +402,9 @@ Professor::Professor(const std::string& nome2, unsigned int matricula2, const st
     email = email2;
     CPF = CPF2;
     sexo = sexo2;
-    //falta preencher o map Alunos
 }
 
+// Tem q testar
 void Professor::addNota(const std::string& materia, unsigned int matricula, const float nota) {
 
     for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
@@ -438,18 +439,29 @@ void Professor::visuNotasTodos(std::string materia) {
 }
 
 void Professor::update(int avaliacao, const std::string& materia, float novaNota, unsigned int matriculaAluno) {
-    
     /*
-    auto it = Alunos; // Acessa o map Alunos
+    for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
+        auto aluno = it->second; 
 
-    it.second -> auto x; //Acessa shared_ptr Aluno 
+        if (aluno->matricula == matricula) {
+            auto materia_it = aluno->materiasMap.find(materia);
+            if (materia_it == aluno->materiasMap.end()) {
+                std::cout << "Matéria " << materia << " não encontrada para o aluno com matrícula " << matricula << "." << std::endl;
+                
+            }
+            else {
+              //   Adiciona a nota na lista de notas da matéria
+                Informacoes& info = materia_it->second;
+                info.notas.push_back(nota);
 
-    x.second -> auto y; //Acessa materiasMap
-
-    y.second -> auto z; //Acessa informações 
-
-    z.notas[avaliacao] = novaNota; //Apaga a nota
+               //  Mensagem de sucesso (opcional)
+                std::cout << "Nota " << nota << " adicionada com sucesso para a matéria " << materia << " do aluno com matrícula " << matricula << "." << std::endl;
+                
+            }
+        }
+    }
     */
+    std::cout << "Aluno com matrícula " << matricula << " não encontrado." << std::endl;
 }
 
 void Professor::visuDadosMatricula() const {
@@ -478,7 +490,6 @@ Admin::Admin(const std::string& nome2, unsigned int matricula2, const std::strin
     email = email2;
     CPF = CPF2;
     sexo = sexo2;
-    //preencher o map Dados all em outra função e chamar-la antes de visu dados todos
 }
 
 void Admin::preencheDados(){
@@ -514,9 +525,10 @@ void Admin::insertAluno(const std::string& nome, unsigned int matricula, const s
         if (DadosAll.find(std::to_string(matricula)) == DadosAll.end()) {
             std::shared_ptr<Aluno> aluno = std::make_shared<Aluno>(nome, matricula, senha, dataNasc, curso, telefone, nacionalidade, email, CPF, sexo, NSG, regEspecial, materias);
             DadosAll.insert({std::to_string(matricula),aluno});
+            std::cout<< nome << " adicionado como aluno com sucesso!" << std::endl;
         }
         else{
-            std::cout << "Erro: Professor com matrícula " << matricula << " já existe." << std::endl;
+            std::cout << "Erro: Aluno com matrícula " << matricula << " já existe." << std::endl;
         }       
 }
 
@@ -525,6 +537,7 @@ void Admin::insertProfessor(const std::string& nome, unsigned int matricula, con
         if (DadosAll.find(std::to_string(matricula)) == DadosAll.end()) {
             std::shared_ptr<Professor> professor = std::make_shared<Professor>(nome, matricula, senha, dataNasc, curso, telefone, nacionalidade, email, CPF, sexo);
             DadosAll.insert({std::to_string(matricula),professor});
+            std::cout << nome << " adicionado como professor com sucesso!" << std::endl;
         }else{
              std::cout << "Erro: Professor com matrícula " << matricula << " já existe." << std::endl;
         }
@@ -536,6 +549,7 @@ void Admin::insertAdmin(const std::string& nome, unsigned int matricula, const s
         if (DadosAll.find(std::to_string(matricula)) == DadosAll.end()) {
             std::shared_ptr<Admin> admin = std::make_shared<Admin>(nome, matricula, senha, dataNasc, telefone, nacionalidade, email, CPF, sexo);
              DadosAll.insert({std::to_string(matricula),admin});
+             std::cout<< nome << " adicionado como admin com sucesso!" << std::endl;
         }
         else{
             std::cout << "Erro: Admin com matrícula " << matricula << " já existe." << std::endl;
@@ -549,14 +563,9 @@ void Admin::insertMateria(unsigned int matricula, const std::string& materia) {
     
 
     if (it != DadosAll.end()) {
-  
         std::shared_ptr<Aluno> alunoPtr = std::dynamic_pointer_cast<Aluno>(it->second);
-        
- 
-        if (alunoPtr) {
-            
-         
-            
+        if (alunoPtr) {                           //db.getMateria retorna um struct informações da materia
+            alunoPtr->materiasMap.insert({materia,db.getMateria(materia)});   
         } else {
             std::cout << "A matrícula " << matricula << " não corresponde a um aluno.\n";
         }
@@ -565,7 +574,7 @@ void Admin::insertMateria(unsigned int matricula, const std::string& materia) {
     }
 } 
 
-
+// tem q testar
 void Admin::trancarMateria(unsigned int matricula, const std::string& materia) {
     // Itera sobre todos os alunos para encontrar o aluno com a matrícula correta
     for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
@@ -642,6 +651,7 @@ void Admin::CriaMateria(const std::string& materia, std::vector<std::string> dia
     }
 }
 
+// tem q testar
 void Admin::ativarRegEsp(unsigned int matricula) {
     // Itera sobre todos os alunos para encontrar o aluno com a matrícula correta
     for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
@@ -741,3 +751,5 @@ std::shared_ptr<User> login(unsigned int matricula, const std::string& senha) {
     }
     return nullptr;
 }
+
+// Fazer destrutores Admin e Professores
