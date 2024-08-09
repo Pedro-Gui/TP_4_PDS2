@@ -34,7 +34,7 @@ Posso fazer requerimentos de ocorrencias (trancamento parcial/total, regime espe
 **Descrição do funcionamento do Projeto**
 
 <p align="justify">
-Na funcao main, aparece uma mensagem indicando que você está tentando entrar no sistema educacional e pede para que seja inserido a matricula e senha. Estando tudo certo, o login é bem sucedido e aparece uma mensagem de "Bem vindo" juntamente com a sua função dentro do sistema (aluno, professor ou admin). Após isso, lhe são dadas as opções do que deseja fazer e são pedidas as informações necessárias para realizar o que foi pedido, como por exemplo se como aluno, quer visualizar suas notas em determinada matéria, lhe é pedido para escrever o nome da matéria.
+Na funcao main, aparece uma mensagem indicando que você está tentando entrar no sistema educacional e pede para que seja inserido a matricula e senha. Estando tudo certo, o login é bem sucedido e aparece uma mensagem de "Bem vindo" juntamente com a sua função dentro do sistema (aluno, professor ou admin). Após isso, lhe são dadas as opções do que deseja fazer e são pedidas as informações necessárias para realizar o que foi pedido, como por exemplo, se como aluno, quiser visualizar suas notas em determinada matéria, lhe é pedido para escrever o nome da matéria.
 <p align="justify">
 O .cpp lê os arquivos para adquirir os dados e adiciona-los no sistema. A seguir apresento o formato no qual os dados devem estar no .txt para que o programa funcione:
 <p align="justify">  
