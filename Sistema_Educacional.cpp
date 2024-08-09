@@ -4,7 +4,7 @@
 std::shared_ptr<User> Banco_de_dados::getUser(unsigned int matricula) {
 
 
-    Banco_de_dados db;
+    
     int identificacao = std::stoi(std::to_string(matricula).substr(6, 10)); //admin 0-100, professor 101-2000, aluno 2001-9999
     //std::cout << "Ident: " << identificacao << std::endl;
 
@@ -166,10 +166,10 @@ std::shared_ptr<User> Banco_de_dados::getUser(unsigned int matricula) {
         }
         AlunoFile.close();
 
-        return nullptr;
+        
 
     }
-
+    return nullptr;
 }
 
 // Tem que conferir sequencia corretamente e não pode haver ;
@@ -565,7 +565,7 @@ void Admin::insertMateria(unsigned int matricula, const std::string& materia) {
     if (it != DadosAll.end()) {
         std::shared_ptr<Aluno> alunoPtr = std::dynamic_pointer_cast<Aluno>(it->second);
         if (alunoPtr) {                           //db.getMateria retorna um struct informações da materia
-            alunoPtr->materiasMap.insert({materia,db.getMateria(materia)});   
+          //  alunoPtr->materiasMap.insert({materia,db.getMateria(materia)});   
         } else {
             std::cout << "A matrícula " << matricula << " não corresponde a um aluno.\n";
         }
@@ -632,7 +632,7 @@ void Admin::CriaMateria(const std::string& materia, std::vector<std::string> dia
     
     if(!materiaExiste){
         std::ofstream file2(fileName, std::ios::app);
-        std::string MateriaAdicionada = materia+";"+ std::to_string(cargaHoraria);+";"; // "Probabilidade;60;segunda,quarta;9;";
+        std::string MateriaAdicionada = materia+";"+ std::to_string(cargaHoraria)+";"; // "Probabilidade;60;segunda,quarta;9;";
                     for(auto diax : dia){
                         MateriaAdicionada += diax+",";
                     }MateriaAdicionada.pop_back();

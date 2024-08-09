@@ -37,7 +37,7 @@ int main(){
                 while(opcao2!=0){
                     std::cout << "Digite o valor da opcao desejada." << std::endl << "1) Visualisar notas" << std::endl << "2) Visualisar dados da minha matricula " << std::endl << "3) Visualisar minhas materias matriculadas" << std::endl << "0) Logout" << std::endl;
                     std::cin >> opcao2;
-                    switch (opcao2 != 0){
+                    switch (opcao2){
                         case 1:
                             std::cout << std::endl << "Insira o nome de uma materia para ver as notas: ";
                             std::cin >> materiaDesejada;

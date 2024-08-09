@@ -125,7 +125,7 @@ public:
 
     void visuDadosMatricula() const override;
 
-    ~Professor();
+    ~Professor() = default;
 };
 
 class Admin : public User {
