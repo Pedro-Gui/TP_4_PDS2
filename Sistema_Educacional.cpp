@@ -172,6 +172,7 @@ std::shared_ptr<User> Banco_de_dados::getUser(unsigned int matricula) {
 
 }
 
+// Tem que conferir sequencia corretamente e não pode haver ;
 bool Banco_de_dados::validPassword(const std::string& password) const {
     if (password.find("123") != std::string::npos) {
         std::cout << "A sequencia 123 nao eh permitida!" << std::endl;
@@ -369,7 +370,7 @@ void Aluno::visuDadosMatricula() const {
     std::cout << "Sexo: " << sexo << std::endl;
     std::string aux = regEspecial ? "SIM" : "NAO";
     std::cout << "Regime especial: " << aux << std::endl;
-    std::cout << "NSG: " << NSG << std::endl;
+    std::cout << "NSG: " << NSG << std::endl;  // TEm q calcular ainda
 
 }
 
@@ -401,9 +402,9 @@ Professor::Professor(const std::string& nome2, unsigned int matricula2, const st
     email = email2;
     CPF = CPF2;
     sexo = sexo2;
-    //falta preencher o map Alunos
 }
 
+// Tem q testar
 void Professor::addNota(const std::string& materia, unsigned int matricula, const float nota) {
 
     for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
@@ -489,7 +490,6 @@ Admin::Admin(const std::string& nome2, unsigned int matricula2, const std::strin
     email = email2;
     CPF = CPF2;
     sexo = sexo2;
-    //preencher o map Dados all em outra função e chamar-la antes de visu dados todos
 }
 
 void Admin::preencheDados(){
@@ -574,7 +574,7 @@ void Admin::insertMateria(unsigned int matricula, const std::string& materia) {
     }
 } 
 
-
+// tem q testar
 void Admin::trancarMateria(unsigned int matricula, const std::string& materia) {
     // Itera sobre todos os alunos para encontrar o aluno com a matrícula correta
     for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
@@ -651,6 +651,7 @@ void Admin::CriaMateria(const std::string& materia, std::vector<std::string> dia
     }
 }
 
+// tem q testar
 void Admin::ativarRegEsp(unsigned int matricula) {
     // Itera sobre todos os alunos para encontrar o aluno com a matrícula correta
     for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
@@ -750,3 +751,5 @@ std::shared_ptr<User> login(unsigned int matricula, const std::string& senha) {
     }
     return nullptr;
 }
+
+// Fazer destrutores Admin e Professores
