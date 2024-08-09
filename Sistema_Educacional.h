@@ -22,7 +22,7 @@
 class User {
 protected:
     std::string nome;
-    unsigned int matricula; // 2023 ano 95 curso 1627 
+    unsigned int matricula; // 2023 ano 95 curso 1627 ident
     std::string senha;
     std::string dataNasc;
     std::string telefone;
@@ -119,7 +119,7 @@ public:
     /// @brief permite a visualizacao das notas de todos os alunos, especificados pelo numero de matricula
     void visuNotasTodos(std::string materia);
 
-    /// @brief deleta determinada avaliacao do sistema 1,2,3 ou quarta avaliaçao, deve apagar esta nota de  os alunos matriculados nesta materia.
+    /// @brief deleta determinada avaliacao do sistema 1,2,3 ou quarta avaliaçao, deve apagar e atualizar esta nota de  os alunos matriculados nesta materia.
     /// @param avaliacao
     void update(int avaliacao, const std::string& materia, float novaNota,unsigned int matriculaAluno);
 
@@ -215,6 +215,5 @@ public:
 /// @param senha 
 /// @return 
 std::shared_ptr<User> login(unsigned int matricula, const std::string& senha);
-std::map<std::string, std::shared_ptr<Aluno>> Alunos;
 void preencheAlunos();
 #endif // _SISTEMA_EDUCACIONAL_H

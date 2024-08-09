@@ -9,30 +9,32 @@
 // .\main
 
 int main(){
-    std::string password = " ";
-    unsigned int matricula = 0;
+    
     int opcao = 1, opcao2 = 1;
     bool login1 = true;
-    while(opcao!=0){
     
+    while(opcao!=0){
+        std::string password = " ";
+        unsigned int matricula = 0;
+        
+
         std::cout << "SISTEMA EDUCACIONAL" << std::endl << "Login(n* matricula): ";
         std::cin>> matricula;
         std::cout << "Senha: ";
         std::cin>> password;
-
         std::shared_ptr<User> user = login(matricula, password);
 
         if (user) {
             std::cout << "Login bem-sucedido!" << std::endl;
-            //Preenche o map Alunos com os valores de Alunos.txt
-                if(login1){
-                    preencheAlunos();
-                    login1 = false;
-                }
-
             // Menu caso usuário for Aluno
             if(std::shared_ptr<Aluno> aluno = std::dynamic_pointer_cast<Aluno>(user)) {
                 std::cout << "Bem-vindo, Aluno!" << std::endl;
+                    //Preenche o map Alunos com os valores de Alunos.txt
+                    if(login1){
+                        preencheAlunos();
+                        login1 = false;
+                    }
+                
                 std::string materiaDesejada = "";
                 while(opcao2!=0){
                     std::cout << "Digite o valor da opcao desejada." << std::endl << "1) Visualisar notas" << std::endl << "2) Visualisar dados da minha matricula " << std::endl << "3) Visualisar minhas materias matriculadas" << std::endl << "0) Logout" << std::endl;
@@ -53,11 +55,12 @@ int main(){
                             opcao2 = 0;
                             break;
                         default:
-                            std::cout<<"Opcao digitada não existe, digite novamente" << std::endl;
+                            std::cout<<"Opcao digitada nao existe, digite novamente" << std::endl;
                             break;
                     }
                 }
                 std::cout<< "Obrigado por usar nosso sistema"; 
+                opcao2 = 1;
                 std::cout << ", deseja fazer login novamente ?" << std::endl << "1) Fazer login novamente" << std::endl << "0) Sair" << std::endl;
                 std::cin >> opcao;
 
@@ -65,16 +68,24 @@ int main(){
 
             // Menu caso usuário for Professor
             else if (std::shared_ptr<Professor> professor = std::dynamic_pointer_cast<Professor>(user)) {
-                std::cout << "Bem-vindo, Professor!" << std::endl;
-                while(opcao2!=0){
-                    std::cout << "Digite o valor da opcao desejada." << std::endl << "1) Adicionar notas para um aluno em uma materia" << std::endl << "2) Apagar nota de aluno " << std::endl << "3) Visualisar dados da matricula de um aluno" << std::endl << "4) Visualisar avaliacao de todos os alunos ate o momento" << std::endl<< "0) Logout" << std::endl;
-                    std::cin>> opcao2;
+                //Preenche o map Alunos com os valores de Alunos.txt
+                if(login1){
+                    preencheAlunos();
+                    login1 = false;
+                }
 
+                std::cout << "Bem-vindo, Professor!" << std::endl;
+                opcao2 = 1;
                     unsigned int matriculaAluno; //precisa fazer um jeito do professor inserir a matricula do aluno
                     float notaAluno= 0; //precisa fazer um jeito do professor inserir a nota
                     int avaliacaoDesejada = 0; // precisa fazer um jeito de inserir qual av deve ser apagada
                     float notaDesejada=0;
                     std::string materiaDesejada;
+
+                while(opcao2!=0){
+                    std::cout << "Digite o valor da opcao desejada." << std::endl << "1) Adicionar notas para um aluno em uma materia" << std::endl << "2) Atualizar nota de um aluno " << std::endl << "3) Visualisar dados da minha matricula" << std::endl << "4) Visualisar avaliacao de todos os alunos ate o momento" << std::endl<< "0) Logout" << std::endl;
+                    std::cin>> opcao2;
+
                     switch (opcao2){
                         case 1:
                             std::cout << std::endl << "Materia: ";
@@ -108,11 +119,12 @@ int main(){
                             opcao2 = 0;
                             break;
                         default:
-                            std::cout<<"Opcao digitada não existe, digite novamente";
+                            std::cout<<"Opcao digitada nao existe, digite novamente";
                             break;
                     }
                 }
                 std::cout<< "Obrigado por usar nosso sistema";
+                opcao2 = 1;
                 std::cout << ", deseja fazer login novamente ?" << std::endl << "1) Fazer login novamente" << std::endl << "0) Sair" << std::endl;
                 std::cin >> opcao;
             }
@@ -121,7 +133,31 @@ int main(){
             else if (std::shared_ptr<Admin> admin = std::dynamic_pointer_cast<Admin>(user)) {
                 std::cout << "Bem-vindo, Admin!" << std::endl;
                 admin->preencheDados();
+
+                //declarar parametros, todos os valores devem, o admin deve inserir todos valores antes de chamar a funçao
+                    unsigned int matriculaManipulada;
+                    std::string nome;
+                    std::string senha;      
+                    std::string dataNasc;
+                    std::string curso;
+                    std::string telefone;
+                    std::string nacionalidade;
+                    std::string email;
+                    std::string CPF;
+                    std::string sexo;
+                    int NSG;
+                    bool resEspecial;
+                    Informacoes info;
+                    std::string materia;                                      
+                    std::string horario;
+                    int cargaHoraria;
+                    std::string aux;
+                    std::vector<std::string> dia;
+                    bool Booleano = true;
+                    int SimNao;
+
                     while(opcao2!=0){
+
                         std::cout << "Digite o valor da opcao desejada." << std::endl << "1) Inserir Admin" << std::endl << "2) Inserir Aluno" <<
                         std::endl << "3) Inserir Professor" << std::endl<< "4) Inserir Materia" << std::endl << "5) Alterar regime especial de aluno" <<
                         std::endl << "6) Criar Materia" << std::endl << "7) Trancar materia de aluno" << std::endl << "8) Visualisar meus dados de matricula " <<
@@ -129,27 +165,7 @@ int main(){
                         std::endl  << "0) Logout" << std::endl;
                         std::cin>> opcao2;
                             
-                        //declarar parametros, todos os valores devem, o admin deve inserir todos valores antes de chamar a funçao
-                        unsigned int matriculaManipulada;
-                        std::string nome;
-                        std::string senha;      
-                        std::string dataNasc;
-                        std::string curso;
-                        std::string telefone;
-                        std::string nacionalidade;
-                        std::string email;
-                        std::string CPF;
-                        std::string sexo;
-                        int NSG;
-                        bool resEspecial;
-                        Informacoes info;
-                        std::string materia;                                      
-                        std::string horario;
-                        int cargaHoraria;
-                        std::string aux;
-                        std::vector<std::string> dia;
-                        bool Booleano = true;
-                        int SimNao;
+                        
                             
                         switch (opcao2){
                             case 1:  
@@ -281,22 +297,24 @@ int main(){
                                 opcao2 = 0;
                                 break;
                             default:
-                                std::cout<<"Opcao digitada não existe, digite novamente";
+                                std::cout<<"Opcao digitada nao existe, digite novamente";
                                 break;
                         }  
                     }
-                opcao2 = 1;
                 std::cout<< "Obrigado por usar nosso sistema";
+                opcao2 = 1;
                 std::cout << ", deseja fazer login novamente ?" << std::endl << "1) Fazer login novamente" << std::endl << "0) Sair" << std::endl;
                 std::cin >> opcao;
+                }
+
             }
             // Caso não for nenhum das anteriores ocorreu um erro
             else{
-                std::cout << "Matrícula ou senha incorretas." << std::endl;
+                std::cout << "Matricula ou senha incorretas." << std::endl;
+                
+                
             } 
         }
         
-    } 
-    
-    return SUCESSO;
+        return SUCESSO;
 }
