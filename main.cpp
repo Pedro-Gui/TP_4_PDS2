@@ -153,7 +153,7 @@ int main(){
                             break;
                     }
                 }
-                std::cout<< "Obrigado por usar nosso sistema";
+                std::cout<< "Obrigado por usar nosso sistema.";
                 professor->salvarDadosnoTXT();
                 opcao2 = 1;
                 std::cout << "Deseja fazer login novamente ?" << std::endl << "1) Fazer login novamente" << std::endl << "0) Sair" << std::endl;
@@ -186,6 +186,7 @@ int main(){
                     std::vector<std::string> dia;
                     bool Booleano = true;
                     int SimNao;
+                    bool first = true;
 
                     while(opcao2!=0){
 
@@ -193,7 +194,7 @@ int main(){
                         std::endl << "1) Inserir Admin" <<
                         std::endl << "2) Inserir Aluno" <<
                         std::endl << "3) Inserir Professor" <<
-                        std::endl<< "4) Inserir Materia" <<
+                        std::endl << "4) Inserir Materia" <<
                         std::endl << "5) Alterar regime especial de aluno" <<
                         std::endl << "6) Criar Materia" <<
                         std::endl << "7) Trancar materia de aluno" <<
@@ -309,8 +310,8 @@ int main(){
                                 std::getline(std::cin,materia);
                                 while(Booleano != false) {
                                     std::cout << std::endl << "Qual dia da Semana que tem aula da materia: ";
-                                    std::cin.ignore();
-                                    getchar();
+                                    if(!first){getchar();}
+                                    first = false;
                                     std::getline(std::cin, aux);
                                     dia.push_back(aux);
                                     std::cout << std::endl << "Mais algum dia? (0 para SIM, qualquer outro para NAO )";
@@ -322,6 +323,7 @@ int main(){
                                     }
                                 }
                                 std::cout << std::endl << "Horario: ";
+                                std::cin >> horario;
                                 std::cout << std::endl << "Carga horaria: ";                      
                                 std::cin >> cargaHoraria;
                                 admin->CriaMateria(materia, dia, horario, cargaHoraria);
@@ -360,7 +362,7 @@ int main(){
                                 break;
                         }  
                     }
-                std::cout<< "Obrigado por usar nosso sistema";
+                std::cout<< "Obrigado por usar nosso sistema.";
                 admin->salvarDadosnoTXT();
                 opcao2 = 1;
                 std::cout << "Deseja fazer login novamente ?" << std::endl << "1) Fazer login novamente" << std::endl << "0) Sair" << std::endl;
