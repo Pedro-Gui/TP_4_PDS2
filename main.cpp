@@ -2,11 +2,14 @@
 #include<string.h>
 #include <cstdlib>
 #include"Sistema_Educacional.h"
+#include <cctype>     //verificar se a matricula digitada tem numero
+#include <algorithm> //verificar se a matricula digitada tem numero
 
 #define SUCESSO 0
 
 // g++ -std=c++11 -Wall -o main main.cpp Sistema_Educacional.cpp
 // .\main
+// descricao de como todos os txt estao organizados no README
 
 int main(){
     
@@ -14,19 +17,27 @@ int main(){
     bool login1 = true;
     
     while(opcao!=0){
+        std::shared_ptr<User> user = nullptr;
         std::string password = " ";
         unsigned int matricula = 0;
-        
+        std::string matriculaStr =" ";
 
         std::cout << "SISTEMA EDUCACIONAL" << std::endl << "Login(n* matricula): ";
-        std::cin>> matricula;
+        std::cin  >> matriculaStr;
         std::cout << "Senha: ";
         std::cin>> password;
-        std::shared_ptr<User> user = login(matricula, password);
+        //verifica se ha somente numeros na matricula
+        if(!matriculaStr.empty() && std::all_of(matriculaStr.begin(), matriculaStr.end(), ::isdigit)){
+            matricula = std::stoi(matriculaStr);
+            user = login(matricula, password);
+        }else{
+            std::cout <<"Nao digite letras na matricula" << std::endl;
+        }
+        
 
         if (user) {
             std::cout << "Login bem-sucedido!" << std::endl;
-            // Menu caso usuário for Aluno
+            // Menu caso usuario for Aluno
             if(std::shared_ptr<Aluno> aluno = std::dynamic_pointer_cast<Aluno>(user)) {
                 std::cout << "Bem-vindo, Aluno!" << std::endl;
                     //Preenche o map Alunos com os valores de Alunos.txt
@@ -35,14 +46,20 @@ int main(){
                         login1 = false;
                     }
                 
-                std::string materiaDesejada = "";
+                std::string materiaDesejada = " ";
                 while(opcao2!=0){
-                    std::cout << "Digite o valor da opcao desejada." << std::endl << "1) Visualisar notas" << std::endl << "2) Visualisar dados da minha matricula " << std::endl << "3) Visualisar minhas materias matriculadas" << std::endl << "0) Logout" << std::endl;
+                    std::cout << "Digite o valor da opcao desejada." <<
+                    std::endl << "1) Visualisar notas" <<
+                    std::endl << "2) Visualisar dados da minha matricula " <<
+                    std::endl << "3) Visualisar minhas materias matriculadas" <<
+                    std::endl << "4) Realizar requerimento" <<
+                    std::endl << "0) Logout" << std::endl;
                     std::cin >> opcao2;
                     switch (opcao2){
                         case 1:
                             std::cout << std::endl << "Insira o nome de uma materia para ver as notas: ";
-                            std::cin >> materiaDesejada;
+                            getchar();
+                            std::getline(std::cin,materiaDesejada);
                             aluno->visuNotas(materiaDesejada);
                             break;
                         case 2:
@@ -50,6 +67,9 @@ int main(){
                             break;
                         case 3:
                             aluno->visuMaterias();
+                            break;
+                        case 4:
+                            aluno->realizaRequerimento();
                             break;
                         case 0:
                             opcao2 = 0;
@@ -66,7 +86,7 @@ int main(){
 
             }
 
-            // Menu caso usuário for Professor
+            // Menu caso usuario for Professor
             else if (std::shared_ptr<Professor> professor = std::dynamic_pointer_cast<Professor>(user)) {
                 //Preenche o map Alunos com os valores de Alunos.txt
                 if(login1){
@@ -83,28 +103,37 @@ int main(){
                     std::string materiaDesejada;
 
                 while(opcao2!=0){
-                    std::cout << "Digite o valor da opcao desejada." << std::endl << "1) Adicionar notas para um aluno em uma materia" << std::endl << "2) Atualizar nota de um aluno " << std::endl << "3) Visualisar dados da minha matricula" << std::endl << "4) Visualisar avaliacao de todos os alunos ate o momento" << std::endl<< "0) Logout" << std::endl;
+                    std::cout << "Digite o valor da opcao desejada." <<
+                    std::endl << "1) Adicionar notas para um aluno em uma materia" <<
+                    std::endl << "2) Atualizar nota de um aluno " <<
+                    std::endl << "3) Visualisar dados da minha matricula" <<
+                    std::endl << "4) Visualisar avaliacao de todos os alunos ate o momento" <<
+                    std::endl<< "0) Logout" << std::endl;
                     std::cin>> opcao2;
 
                     switch (opcao2){
                         case 1:
-                            std::cout << std::endl << "Materia: ";
-                            std::cin  >> materiaDesejada;
                             std::cout << std::endl << "Matricula do aluno: ";
-                            std::cin >> matriculaAluno;
+                            std::cin >> matriculaAluno;                            
+                            std::cout << std::endl << "Materia: ";
+                            getchar();
+                            std::getline(std::cin,materiaDesejada);
                             std::cout << std::endl << "Nota do aluno: ";
                             std::cin >> notaAluno;
                             professor->addNota(materiaDesejada,matriculaAluno,notaAluno);
                             break;
                         case 2:
+                            std::cout << std::endl << "Matricula do aluno: ";
+                            getchar();
+                            std::getline(std::cin,materiaDesejada);
+                            std::cout << std::endl << "Materia: ";
+                            getchar();
+                            std::getline(std::cin,materiaDesejada);
                             std::cout << std::endl << "Avaliacao que deseja atualizar: ";
                             std::cin >> avaliacaoDesejada;
-                            std::cout << std::endl << "Materia: ";
-                            std::cin >> materiaDesejada;
                             std::cout << std::endl << "Nota: ";
                             std::cin >> notaDesejada;
-                            std::cout << std::endl << "Matricula do aluno: ";
-                            std::cin >> matriculaAluno;
+
                             professor->update(avaliacaoDesejada, materiaDesejada, notaDesejada ,matriculaAluno);
                             break;
                         case 3:
@@ -112,7 +141,8 @@ int main(){
                             break;
                         case 4:
                             std::cout << std::endl <<"Insira o nome de uma materia para ver as notas: ";
-                            std::cin >> materiaDesejada;
+                            getchar();
+                            std::getline(std::cin,materiaDesejada);
                             professor->visuNotasTodos(materiaDesejada);
                             break;
                         case 0:
@@ -124,17 +154,18 @@ int main(){
                     }
                 }
                 std::cout<< "Obrigado por usar nosso sistema";
+                professor->salvarDadosnoTXT();
                 opcao2 = 1;
-                std::cout << ", deseja fazer login novamente ?" << std::endl << "1) Fazer login novamente" << std::endl << "0) Sair" << std::endl;
+                std::cout << "Deseja fazer login novamente ?" << std::endl << "1) Fazer login novamente" << std::endl << "0) Sair" << std::endl;
                 std::cin >> opcao;
             }
 
-            // Menu caso usuário for Admin 
+            // Menu caso usuario for Admin 
             else if (std::shared_ptr<Admin> admin = std::dynamic_pointer_cast<Admin>(user)) {
                 std::cout << "Bem-vindo, Admin!" << std::endl;
                 admin->preencheDados();
 
-                //declarar parametros, todos os valores devem, o admin deve inserir todos valores antes de chamar a funçao
+                //declarar parametros, todos os valores devem, o admin deve inserir todos valores antes de chamar a funcao
                     unsigned int matriculaManipulada;
                     std::string nome;
                     std::string senha;      
@@ -158,10 +189,19 @@ int main(){
 
                     while(opcao2!=0){
 
-                        std::cout << "Digite o valor da opcao desejada." << std::endl << "1) Inserir Admin" << std::endl << "2) Inserir Aluno" <<
-                        std::endl << "3) Inserir Professor" << std::endl<< "4) Inserir Materia" << std::endl << "5) Alterar regime especial de aluno" <<
-                        std::endl << "6) Criar Materia" << std::endl << "7) Trancar materia de aluno" << std::endl << "8) Visualisar meus dados de matricula " <<
-                        std::endl << "9) Visualisar dados de matricula (inserir matricula)" << std::endl << "10) Visualisar dados de matricula de todo mundo"<<
+                        std::cout << "Digite o valor da opcao desejada." <<
+                        std::endl << "1) Inserir Admin" <<
+                        std::endl << "2) Inserir Aluno" <<
+                        std::endl << "3) Inserir Professor" <<
+                        std::endl<< "4) Inserir Materia" <<
+                        std::endl << "5) Alterar regime especial de aluno" <<
+                        std::endl << "6) Criar Materia" <<
+                        std::endl << "7) Trancar materia de aluno" <<
+                        std::endl << "8) Visualisar meus dados de matricula " <<
+                        std::endl << "9) Visualisar dados de matricula (inserir matricula)" <<
+                        std::endl << "10) Visualisar dados de matricula de todo mundo"<<
+                        std::endl << "11) Realizar Trancamento Total de um aluno" <<
+                        std::endl << "12) Visualizar Requerimentos" <<
                         std::endl  << "0) Logout" << std::endl;
                         std::cin>> opcao2;
                             
@@ -169,19 +209,21 @@ int main(){
                             
                         switch (opcao2){
                             case 1:  
-                                std::cout << std::endl << "***Digite as informacoes do admim para inseri-lo no sistema***";
+                                std::cout << std::endl << "***Digite as informacoes do admin para inseri-lo no sistema***";
                                 std::cout << std::endl << "Nome: ";
-                                std::cin >> nome;
+                                getchar();
+                                std::getline(std::cin,nome);
                                 std::cout << std::endl << "Matricula: ";
                                 std::cin >> matriculaManipulada;
                                 std::cout << std::endl << "Senha: ";
                                 std::cin >> senha;
-                                std::cout << std::endl << "Data de nascimento: (20/08/2004) ";
+                                std::cout << std::endl << "Data de nascimento: (ex: 00/00/0000) ";
                                 std::cin >> dataNasc;
                                 std::cout << std::endl << "Telefone: (DDD) XXXXX-XXXX ";
                                 std::cin >> telefone;
                                 std::cout << std::endl << "Nacionalidade: ";
-                                std::cin >> nacionalidade;
+                                getchar();
+                                std::getline(std::cin,nacionalidade);
                                 std::cout << std::endl << "Email: ";
                                 std::cin >> email;
                                 std::cout << std::endl << "CPF: (Coloque os pontos) ";
@@ -193,7 +235,8 @@ int main(){
                             case 2:
                                 std::cout << std::endl << "***Digite as informacoes do aluno para inseri-lo no sistema***";
                                 std::cout << std::endl << "Nome: ";
-                                std::cin >> nome;
+                                getchar();
+                                std::getline(std::cin,nome);
                                 std::cout << std::endl << "Matricula: ";
                                 std::cin >> matriculaManipulada;
                                 std::cout << std::endl << "Senha: ";
@@ -201,11 +244,13 @@ int main(){
                                 std::cout << std::endl << "Data de nascimento: (20/08/2004) ";
                                 std::cin >> dataNasc;
                                 std::cout << std::endl << "Curso: ";
-                                std::cin >> curso;
+                                getchar();
+                                std::getline(std::cin,curso);
                                 std::cout << std::endl << "Telefone: (DDD) XXXXX-XXXX ";
                                 std::cin >> telefone;
                                 std::cout << std::endl << "Nacionalidade: ";
-                                std::cin >> nacionalidade;
+                                getchar();
+                                std::getline(std::cin,nacionalidade);
                                 std::cout << std::endl << "Email: ";
                                 std::cin >> email;
                                 std::cout << std::endl << "CPF: (Coloque os pontos) ";
@@ -221,7 +266,8 @@ int main(){
                             case 3:
                                 std::cout << std::endl << "***Digite as informacoes do professor para inseri-lo no sistema***";
                                 std::cout << std::endl << "Nome: ";
-                                std::cin >> nome;
+                                getchar();
+                                std::getline(std::cin,nome);
                                 std::cout << std::endl << "Matricula: ";
                                 std::cin >> matriculaManipulada;
                                 std::cout << std::endl << "Senha: ";
@@ -229,11 +275,13 @@ int main(){
                                 std::cout << std::endl << "Data de nascimento: (20/08/2004) ";
                                 std::cin >> dataNasc;
                                 std::cout << std::endl << "Curso: ";
-                                std::cin >> curso;
+                                getchar();
+                                std::getline(std::cin,curso);
                                 std::cout << std::endl << "Telefone: (DDD) XXXXX-XXXX ";
                                 std::cin >> telefone;
                                 std::cout << std::endl << "Nacionalidade: ";
-                                std::cin >> nacionalidade;
+                                getchar();
+                                std::getline(std::cin,nacionalidade);
                                 std::cout << std::endl << "Email: ";
                                 std::cin >> email;
                                 std::cout << std::endl << "CPF: (Coloque os pontos) ";
@@ -246,7 +294,8 @@ int main(){
                                 std::cout << std::endl << "Matricula: ";
                                 std::cin >> matriculaManipulada;
                                 std::cout << std::endl << "Materia que deseja adicionar: ";
-                                std::cin >> materia;
+                                getchar();
+                                std::getline(std::cin,materia);
                                 admin->insertMateria(matriculaManipulada,materia);
                                 break;
                             case 5:
@@ -260,6 +309,7 @@ int main(){
                                 while(Booleano != false) {
                                     std::cout << std::endl << "Qual dia da Semana que tem aula da materia: ";
                                     std::cin.ignore();
+                                    getchar();
                                     std::getline(std::cin, aux);
                                     dia.push_back(aux);
                                     std::cout << std::endl << "Mais algum dia? (0 para SIM, qualquer outro para NAO )";
@@ -293,6 +343,14 @@ int main(){
                             case 10:
                                 admin->visuDadosMatriculaTodos();
                                 break;
+                            case 11:
+                                std::cout << std::endl << "Matricula: ";
+                                std::cin >> matriculaManipulada;
+                                admin->trancarTotal(matriculaManipulada);
+                                break;
+                            case 12:
+                                admin->visuRequerimentos();
+                                break;
                             case 0:
                                 opcao2 = 0;
                                 break;
@@ -302,8 +360,9 @@ int main(){
                         }  
                     }
                 std::cout<< "Obrigado por usar nosso sistema";
+                admin->salvarDadosnoTXT();
                 opcao2 = 1;
-                std::cout << ", deseja fazer login novamente ?" << std::endl << "1) Fazer login novamente" << std::endl << "0) Sair" << std::endl;
+                std::cout << "Deseja fazer login novamente ?" << std::endl << "1) Fazer login novamente" << std::endl << "0) Sair" << std::endl;
                 std::cin >> opcao;
                 }
 
