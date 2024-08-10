@@ -990,6 +990,7 @@ void Admin::salvarDadosnoTXT(){
         std::cout << ".";  
         int identificacao = std::stoi(ForUser.first.substr(6, 10)); //admin 0-100, professor 101-2000, aluno 2001-9999
         //std::cout << "Ident: " << identificacao << std::endl;
+        //std::cout << identificacao << std::endl;
         if (identificacao >= 0 && identificacao <= 100) {
             std::string fileName = "Admin.txt";
             std::string linha;
@@ -1000,7 +1001,7 @@ void Admin::salvarDadosnoTXT(){
                 linha = ForUser2->nome +";"+std::to_string(ForUser2->matricula)+";"+ForUser2->senha+";"+ForUser2->dataNasc+";"+
                 ForUser2->sexo +";" + ForUser2->CPF + ";" + ForUser2->telefone + ";" + ForUser2->email +";"+ForUser2->nacionalidade+";";
                 file2 << linha << std::endl;
-                std::cout << linha << std::endl;   
+                //std::cout << linha << std::endl;   
                 file2.close();  
             }
             

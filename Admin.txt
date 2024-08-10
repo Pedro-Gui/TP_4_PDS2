@@ -1,4 +1,4 @@
-Mariana Oliveira;2023080071;Q4mR2pX8vL5w;14/02/1995;Feminino;234.567.890-12;(21)98765-4321;mariana.oliveira95@gmail.com;brasileira;
 Lucas Pereira;2022050043;K3bL6tN9rW2f;22/11/1994;Masculino;345.678.901-23;(31)91234-5678;lucas.pereira94@hotmail.com;argentino;
 Isabela Costa;2023070041;C5xV7mR2kJ8p;30/07/1997;Feminino;456.789.012-34;(51)92345-6789;isabela.costa97@gmail.com;mexicana;
+Mariana Oliveira;2023080071;Q4mR2pX8vL5w;14/02/1995;Feminino;234.567.890-12;(21)98765-4321;mariana.oliveira95@gmail.com;brasileira;
 Glauber;2024000000;testeadmin;01/01/0001;Masculino;123.456.789-01;(12)93456-7890;Admin@gmail.com;brasileiro;
