@@ -210,7 +210,7 @@ bool Banco_de_dados::validMatricula(unsigned int matricula) const {
 Informacoes Banco_de_dados::getMateria(const std::string& materia) {
     Informacoes info;
     
-    std::ifstream MateriaFile("Admin.txt");
+    std::ifstream MateriaFile("Materia.txt");
         std::string linha;
 
         if (!MateriaFile.is_open()) {
@@ -594,10 +594,10 @@ void Professor::visuNotasTodos(std::string materia) {
     }
 }
 
-void Professor::update(int avaliacao, const std::string& materia, float novaNota, unsigned int matriculaAluno) {
+void Professor::update(long long unsigned int avaliacao, const std::string& materia, float novaNota, unsigned int matriculaAluno) {
     bool encontrou = false;
-    for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
-        auto aluno = it->second; 
+    for (auto it : Alunos) {
+        auto aluno = it.second; 
             
         if (aluno->matricula == matriculaAluno) {
             auto materia_it = aluno->materiasMap.find(materia);
@@ -606,14 +606,15 @@ void Professor::update(int avaliacao, const std::string& materia, float novaNota
             }
             else {
                 Informacoes& info = materia_it->second;
-                    if(avaliacao<info.notas.size()){
+                    if(avaliacao < info.notas.size()){
                         info.notas[avaliacao-1]=novaNota;
                         encontrou = true;
                         std::cout << "Nota " << novaNota << " atualizada com sucesso para a materia " << materia << " do aluno com matricula " << matriculaAluno << "." << std::endl;
-                }
-                else{
-                        std::cout << "Essa avaliacao nao existe" << std::endl ;
-                }
+                    }
+                    else{
+                            std::cout << "Essa avaliacao nao existe" << std::endl ;
+                            encontrou  = true;
+                    }
             }
         }
     }
@@ -768,26 +769,29 @@ void Admin::insertMateria(unsigned int matricula, const std::string& materia) {
 void Admin::trancarMateria(unsigned int matriculaAluno, const std::string& materia) {
     bool encontrou = false;
     // Itera sobre todos os alunos para encontrar o aluno com a matrícula correta
-    for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
-        auto aluno = it->second; 
+    for (auto it : DadosAll) {
+        int identificacao = std::stoi(it.first.substr(6, 10)); //admin 0-100, professor 101-2000, aluno 2001-9999
+            if (identificacao >= 2001 && identificacao <= 9999) {
+                std::shared_ptr<Aluno> alunofor = std::dynamic_pointer_cast<Aluno>(it.second); 
+            
+                // Verifica se a matrícula corresponde
+                if (alunofor->matricula == matriculaAluno) {
+                    auto materia_it = alunofor->materiasMap.find(materia);
+                    if (materia_it == alunofor->materiasMap.end()) {
+                        std::cout << "Materia " << materia << " nao encontrada para o aluno com matricula " << matriculaAluno << "." << std::endl;
+                        
+                    }
+                    else {
+                    //   Tranca a matéria;
+                        Informacoes& info = materia_it->second;
+                        info.condTrancado = true;
+                        encontrou = true;
 
-        // Verifica se a matrícula corresponde
-        if (aluno->matricula == matriculaAluno) {
-            auto materia_it = aluno->materiasMap.find(materia);
-            if (materia_it == aluno->materiasMap.end()) {
-                std::cout << "Materia " << materia << " nao encontrada para o aluno com matricula " << matriculaAluno << "." << std::endl;
-                
-            }
-            else {
-              //   Tranca a matéria;
-                Informacoes& info = materia_it->second;
-                info.condTrancado = true;
-                encontrou = true;
-
-               //  Mensagem de sucesso (opcional)
-                std::cout << "Materia " << materia << " trancada com sucesso." << std::endl;
-                
-            }
+                    //  Mensagem de sucesso (opcional)
+                        std::cout << "Materia " << materia << " trancada com sucesso." << std::endl;
+                        
+                    }
+                }
         }
     }
     if(!encontrou){
@@ -798,16 +802,20 @@ void Admin::trancarMateria(unsigned int matriculaAluno, const std::string& mater
 void Admin::trancarTotal(unsigned int matriculaAluno){
     bool encontrou = false;
     // Itera sobre todos os alunos para encontrar o aluno com a matrícula correta
-    for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
-        auto aluno = it->second; 
-
-        // Verifica se a matrícula corresponde
-        if (aluno->matricula == matricula) {
-            for (auto materias = aluno->materiasMap.begin(); materias != aluno->materiasMap.end(); ++materias){
-                trancarMateria(matriculaAluno,materias->first);
+    for (auto it : DadosAll) {
+        int identificacao = std::stoi(it.first.substr(6, 10)); //admin 0-100, professor 101-2000, aluno 2001-9999
+            if (identificacao >= 2001 && identificacao <= 9999) {
+                std::shared_ptr<Aluno> alunofor = std::dynamic_pointer_cast<Aluno>(it.second); 
+            
+                // Verifica se a matrícula corresponde
+                if (alunofor->matricula == matriculaAluno) {
+                    for (auto materias : alunofor->materiasMap){
+                        trancarMateria(matriculaAluno,materias.first);
+                    }
+                    encontrou = true;
+                    std::cout << "Trancamento total do aluno com matricula: " << matriculaAluno << " ,realizado com sucesso " << std::endl;
+                }
             }
-            encontrou = true;
-        }
     }
     if(!encontrou){
         std::cout << "Aluno com matricula " << matriculaAluno << " nao encontrado." << std::endl;
@@ -865,16 +873,20 @@ void Admin::CriaMateria(const std::string& materia, std::vector<std::string> dia
 
 void Admin::ativarRegEsp(unsigned int matriculaAluno) {
     bool encontrou = false;
+    
     // Itera sobre todos os alunos para encontrar o aluno com a matrícula correta
-    for (auto it = Alunos.begin(); it != Alunos.end(); ++it) {
-        auto aluno = it->second; 
-
-        // Verifica se a matrícula corresponde
-        if (aluno->matricula == matriculaAluno) {
-            aluno->regEspecial = true;
-            encontrou = true;
+        for (auto it : DadosAll) {
+            int identificacao = std::stoi(it.first.substr(6, 10)); //admin 0-100, professor 101-2000, aluno 2001-9999
+            if (identificacao >= 2001 && identificacao <= 9999) {
+                std::shared_ptr<Aluno> alunofor = std::dynamic_pointer_cast<Aluno>(it.second);
+                // Verifica se a matricula corresponde
+                if (alunofor->matricula == matriculaAluno) {
+                    alunofor->regEspecial = true;
+                    encontrou = true;
+                     std::cout << "Regime especial do aluno com matricula: " << matriculaAluno << "  ,realizado com sucesso. " << std::endl;
+                }
+            }
         }
-    }
     if(!encontrou){
         std::cout << "Aluno com matricula " << matriculaAluno << " nao encontrado." << std::endl;
     }
@@ -956,12 +968,12 @@ void Admin::visuRequerimentos(){
             std::string Justificativa = linha.substr(pos, new_pos - pos); // Justificativa
             
             if (Requerimento == "Regime Especial"){
-                std::cout << "Nome: " << nomeAlunoReq << "| Matricula: " << matriculaAlunoReq <<
+                std::cout << "Nome: " << nomeAlunoReq << " | Matricula: " << matriculaAlunoReq <<
                 std::endl <<"Requerimento : " << Requerimento <<
                 std::endl <<"Justificativa : " << Justificativa << std::endl;
                
             }else{
-                std::cout << "Nome: " << nomeAlunoReq << "| Matricula: " << matriculaAlunoReq <<
+                std::cout << "Nome: " << nomeAlunoReq << " | Matricula: " << matriculaAlunoReq <<
                 std::endl <<"Requerimento : " << Requerimento << "| Materia: " << MateriaReq <<
                 std::endl <<"Justificativa : " << Justificativa << std::endl;
             }

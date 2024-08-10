@@ -125,7 +125,7 @@ public:
 
     /// @brief deleta determinada avaliacao do sistema 1,2,3 ou quarta avaliaçao, deve apagar e atualizar esta nota de  os alunos matriculados nesta materia.
     /// @param avaliacao
-    void update(int avaliacao, const std::string& materia, float novaNota,unsigned int matriculaAluno);
+    void update(long long unsigned int avaliacao, const std::string& materia, float novaNota,unsigned int matriculaAluno);
 
     void visuDadosMatricula() override;
 

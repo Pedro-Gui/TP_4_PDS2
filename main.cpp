@@ -98,7 +98,7 @@ int main(){
                 opcao2 = 1;
                     unsigned int matriculaAluno; //precisa fazer um jeito do professor inserir a matricula do aluno
                     float notaAluno= 0; //precisa fazer um jeito do professor inserir a nota
-                    int avaliacaoDesejada = 0; // precisa fazer um jeito de inserir qual av deve ser apagada
+                    long long unsigned int avaliacaoDesejada = 0; // precisa fazer um jeito de inserir qual av deve ser apagada
                     float notaDesejada=0;
                     std::string materiaDesejada;
 
@@ -124,11 +124,11 @@ int main(){
                             break;
                         case 2:
                             std::cout << std::endl << "Matricula do aluno: ";
-                            getchar();
-                            std::getline(std::cin,materiaDesejada);
+                            std::cin >> matriculaAluno;
                             std::cout << std::endl << "Materia: ";
                             getchar();
                             std::getline(std::cin,materiaDesejada);
+
                             std::cout << std::endl << "Avaliacao que deseja atualizar: ";
                             std::cin >> avaliacaoDesejada;
                             std::cout << std::endl << "Nota: ";
@@ -305,7 +305,8 @@ int main(){
                                 break;
                             case 6:
                                 std::cout << std::endl << "Materia que deseja adicionar: ";
-                                std::cin >> materia;
+                                getchar();
+                                std::getline(std::cin,materia);
                                 while(Booleano != false) {
                                     std::cout << std::endl << "Qual dia da Semana que tem aula da materia: ";
                                     std::cin.ignore();
